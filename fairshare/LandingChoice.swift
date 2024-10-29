@@ -25,13 +25,14 @@ struct LandingChoice: View {
     @State private var showGoodsInput = false
     @State private var showGoodSessionCode = false
     @State private var showText = false
+    
     @State private var code: String = ""
     @State private var confirmClicked = false
     @ObservedObject var globalData = GlobalData.shared
     @StateObject var matrixState: GoodMatrix = GoodMatrix()
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 VStack {
                     Text("Welcome to FairShare!")
@@ -70,9 +71,9 @@ struct LandingChoice: View {
                                         }
                                     }
                                 }
-                            }
-                            .sheet(isPresented: $showGoodSessionCode) {
-                                GoodSessionCode(matrixState: matrixState, code: code,  goods: [Good(name: "")], agent: Agent(id: UUID().uuidString, name: ""))
+                                .navigationDestination(isPresented: $showGoodSessionCode) {
+                                    GoodSessionCode(matrixState: matrixState, code: code,  goods: [Good(name: "")], agent: Agent(id: UUID().uuidString, name: ""))
+                                }
                             }
                             .padding(.bottom, 35)
                             
@@ -106,7 +107,7 @@ struct LandingChoice: View {
                                     ]
                                 )
                             }
-                            .sheet(isPresented: $showGoodsInput) {
+                            .navigationDestination(isPresented: $showGoodsInput) {
                                 GoodsInput(matrixState: matrixState)
                             }
                             .padding(.bottom, 35)

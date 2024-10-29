@@ -63,15 +63,17 @@ struct PeopleView: View {
                         if (people.count >= 2 && globalData.isAdmin) {
                             HStack {
                                 ZStack {
-                                    Rectangle()
-                                        .frame(width: 147, height: 54)
-                                        .foregroundColor(Color(hex: 0x7CB8FF))
-                                        .border(Color(hex: 0x669EE0))
-                                        .cornerRadius(20)
-                                    
-                                    Text("Allocate")
-                                        .foregroundColor(.black)
-                                        .font(.system(size: 24))
+                                    NavigationLink(destination: Allocation(matrixState: matrixState, goods: $goods, people: $people))  {
+                                        Rectangle()
+                                            .frame(width: 147, height: 54)
+                                            .foregroundColor(Color(hex: 0x7CB8FF))
+                                            .border(Color(hex: 0x669EE0))
+                                            .cornerRadius(20)
+                                        
+                                        Text("Allocate")
+                                            .foregroundColor(.black)
+                                            .font(.system(size: 24))
+                                    }
                                 }
                                 .simultaneousGesture(TapGesture().onEnded {
                                     matrixState.getUsers() { persons, error  in
@@ -94,8 +96,6 @@ struct PeopleView: View {
                                     }
                                     
                                     matrixState.getMaxNashWelfare(agents: people, items: goods)
-                                    
-                                    Allocation(matrixState: matrixState, goods: $goods, people: $people)
                                 })
                             }
                         } else {
@@ -113,26 +113,20 @@ struct PeopleView: View {
                     .padding(.trailing)
                     .padding(.bottom, 25)
                     HStack {
-                        Button(action: {
-                            //do nothing
-                        }) {
-                            Text("People Status")
-                                .padding(.trailing, 30)
-                                .padding(.leading, 25)
+                        Text("People Status")
+                            .padding(.trailing, 30)
+                            .padding(.leading, 25)
+                            .foregroundColor(.black)
+
+                        NavigationLink(destination: GoodSessionCode(matrixState: matrixState, code: matrixState.code, goods: goods, agent: agent))  {
+                                Text("Details")
+                                .padding(.leading, 30)
+                                .padding(.trailing, 25)
                                 .foregroundColor(.black)
                         }
-                        Button(action: {
-                            GoodSessionCode(matrixState: matrixState, goods: goods, agent: agent)
-                        }) {
-                            Text("Details")
-                                .padding(.horizontal, 25)
-                                .padding(.vertical, 10)
-                                .foregroundColor(.black)
-                        }
-                        Button(action: {
-                            CreditsInput(agent: agent, matrixState: matrixState, goods: goods)
-                        }) {
-                            Text("My Selection")
+
+                        NavigationLink(destination: CreditsInput(agent: agent, matrixState: matrixState, goods: goods))  {
+                                Text("My Selection")
                                 .padding(.leading, 30)
                                 .padding(.trailing, 25)
                                 .foregroundColor(.black)
@@ -153,12 +147,12 @@ struct PeopleView: View {
         .onAppear {
             matrixState.getUsers() { persons, error in
                 if let error = error {
-                    print("Error updating finished field: \(error)")
+                    print("Error getting users: \(error)")
                 } else {
                     for (i, n) in persons! {
                         people.append(Agent(id: i, name: n))
                     }
-                    print("Successfully added to finished.")
+                    print("Successfully got users.")
                 }
             }
         }

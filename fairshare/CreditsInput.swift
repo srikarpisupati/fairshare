@@ -134,7 +134,7 @@ struct CreditsInput: View {
                                 .foregroundColor(Color(hex: 0xBED5F0))
                                 .cornerRadius(20)
                             
-                            Text("Allocate")
+                            Text("Upload")
                                 .foregroundColor(.gray)
                                 .font(.system(size: 24))
                         }
@@ -143,30 +143,24 @@ struct CreditsInput: View {
                     .padding(.trailing)
                     .padding(.bottom, 25)
                     HStack {
-                        Button(action: {
-                            PeopleView(matrixState: matrixState, goods: goods, agent: agent)
-                        }) {
-                            Text("People Status")
-                                .padding(.trailing, 30)
-                                .padding(.leading, 25)
-                                .foregroundColor(.black)
+                        NavigationLink(destination: PeopleView(matrixState: matrixState, goods: goods, agent: agent))  {
+                                Text("People Status")
+                                    .padding(.trailing, 30)
+                                    .padding(.leading, 25)
+                                    .foregroundColor(.black)
                         }
-                        Button(action: {
-                            GoodSessionCode(matrixState: matrixState, goods: goods, agent: agent)
-                        }) {
-                            Text("Details")
-                                .padding(.horizontal, 25)
-                                .padding(.vertical, 10)
-                                .foregroundColor(.black)
-                        }
-                        Button(action: {
-                            //nothing
-                        }) {
-                            Text("My Selection")
+                        
+                        NavigationLink(destination: GoodSessionCode(matrixState: matrixState, code: matrixState.code, goods: goods, agent: agent))  {
+                                Text("Details")
                                 .padding(.leading, 30)
                                 .padding(.trailing, 25)
                                 .foregroundColor(.black)
                         }
+                        
+                        Text("My Selection")
+                            .padding(.leading, 30)
+                            .padding(.trailing, 25)
+                            .foregroundColor(.black)
                     }
                     .padding()
                     .background(.thickMaterial)

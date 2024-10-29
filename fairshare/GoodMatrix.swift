@@ -245,7 +245,7 @@ class GoodMatrix: ObservableObject {
             task.resume()
         }
     }
-
+    
     func callCloudFunction(dict: [String: Any], completion: @escaping ([[Int]]?) -> Void) {
         let queue = DispatchQueue(label: "cloudFunctionCallQueue")
         
@@ -273,7 +273,7 @@ class GoodMatrix: ObservableObject {
             }
         }
     }
-
+    
     func checkIfDocumentExists(documentID: String, completion: @escaping (Bool) -> Void) {
         let collection = db.collection("sessions")  // Specify your collection name
         
@@ -317,7 +317,7 @@ class GoodMatrix: ObservableObject {
         let documentRef = db.collection("sessions").document(code)
         
         documentRef.updateData([
-            "items" : value
+            "items" : FieldValue.arrayUnion([value])
         ]) { error in
             completion(error)
         }
@@ -360,6 +360,16 @@ class GoodMatrix: ObservableObject {
         }
     }
     
+    func addSession() {
+        db.collection("sessions").document(code).setData([:]) { error in
+            if let error = error {
+                print("Error creating empty session with ID \(self.code): \(error.localizedDescription)")
+            } else {
+                print("Empty session \(self.code) successfully created!")
+            }
+        }
+    }
+    
     func getUsers(completion: @escaping ([String: String]?, Error?) -> Void) {
         let documentRef = db.collection("sessions").document(code)
         
@@ -382,64 +392,9 @@ class GoodMatrix: ObservableObject {
         let documentRef = db.collection("sessions").document(code)
         
         documentRef.updateData([
-            "valuations.\(uuid)": value
+            "valuations.\(uuid)": FieldValue.arrayUnion([value])
         ]) { error in
             completion(error)
         }
     }
-    
-    
-
-    //
-    //        func addSession(people: [Agent], goods: [Good]) {
-    //
-    //            // Used to set value for "isGood"
-    //            let type = true
-    //
-    //            if isAdmin {
-    //                db.collection("sessions").document(doc).setData([
-    //                    UUID().uuidString : myName,
-    //                ])
-    //
-    //                var dict: [String: [String: Int]] = [String: [String: Int]]()
-    //                for i in 0..<matrix.count {
-    //                    let person = people[i]
-    //                    var insideDict: [String: Int] = [String: Int]()
-    //                    for j in 0..<matrix[i].count {
-    //                        insideDict[goods[j].name] = matrix[i][j]
-    //                    }
-    //                    dict[person.name] = insideDict
-    //                }
-    //
-    //                for (key, value) in dict {
-    //                    db.collection("allocations").document(doc).setData([
-    //                        key: value
-    //                    ], merge: true)
-    //                }
-    //                db.collection("finished").document(doc).setData([
-    //                    UUID().uuidString : myName,
-    //                ])
-    //            } else {
-    //                let doc = code
-    //
-    //                db.collection("users").document(doc).updateData([
-    //                    UUID().uuidString : myName,
-    //                ])
-    //
-    //                db.collection("finished").addSnapshotListener { (snapshot, error) in
-    //                    guard let documents = snapshot?.documents, !documents.isEmpty else {
-    //                        print("Collection is still empty.")
-    //                        return
-    //                    }
-    //                    db.collection("finished").document(doc).updateData([
-    //                        UUID().uuidString : self.myName,
-    //                    ])
-    //                    db.collection("users").document(doc).setData([
-    //                        "" : ""
-    //                    ])
-    //                }
-    //            }
-    //
-    //        }
-    //
 }

@@ -89,7 +89,8 @@ struct GoodsInput: View {
                 
                 ZStack {
                     if (goods.count >= 2) {
-                        NavigationLink(destination: GoodSessionCode(matrixState: matrixState, goods: goods, agent: Agent(id: UUID().uuidString, name: "")).navigationBarBackButtonHidden(true)) {
+                        let code = generateRandomString(length: 10)
+                        NavigationLink(destination: GoodSessionCode(matrixState: matrixState, code: code, goods: goods, agent: Agent(id: UUID().uuidString, name: "")).navigationBarBackButtonHidden(true)) {
                             ZStack {
                                 Rectangle()
                                     .frame(width: 147, height: 54)
@@ -103,12 +104,14 @@ struct GoodsInput: View {
                             }
                         }
                         .onAppear {
+                            matrixState.code = code
+                            matrixState.addSession()
                             for g in goods {
                                 matrixState.addToItems(value: g.name) { error in
                                     if let error = error {
-                                        print("Error updating finished field: \(error)")
+                                        print("Error updating goods field: \(error)")
                                     } else {
-                                        print("Successfully added to finished.")
+                                        print("Successfully added to goods.")
                                     }
                                 }
                             }
@@ -143,6 +146,11 @@ struct GoodsInput: View {
         }
         newGood = ""
         print(goods)
+    }
+    
+    private func generateRandomString(length: Int) -> String {
+        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        return String((0..<length).map { _ in letters.randomElement()! })
     }
 }
 
